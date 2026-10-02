@@ -1,0 +1,665 @@
+/* 灵境玄机阁 - 新中式国风暗色玄学美学体系 */
+:root {
+  --bg-primary: #07090e;
+  --bg-card: rgba(18, 24, 38, 0.75);
+  --bg-card-hover: rgba(26, 34, 52, 0.85);
+  --border-gold: rgba(217, 119, 6, 0.25);
+  --border-gold-bright: rgba(245, 158, 11, 0.6);
+  --gold-primary: #f59e0b;
+  --gold-gradient: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+  --crimson-gradient: linear-gradient(135deg, #f43f5e 0%, #be123c 100%);
+  --jade-gradient: linear-gradient(135deg, #10b981 0%, #047857 100%);
+  --text-main: #f1f5f9;
+  --text-sub: #94a3b8;
+  --text-muted: #64748b;
+  
+  /* 五行色彩 */
+  --elem-wood: #10b981;
+  --elem-fire: #f43f5e;
+  --elem-earth: #d97706;
+  --elem-metal: #e2e8f0;
+  --elem-water: #38bdf8;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  background-color: var(--bg-primary);
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(30, 27, 75, 0.45) 0%, transparent 65%),
+    radial-gradient(circle at 10% 80%, rgba(180, 83, 9, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 60%, rgba(13, 148, 136, 0.08) 0%, transparent 40%);
+  color: var(--text-main);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* 顶部玄关导航 */
+.header-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(16px);
+  background: rgba(7, 9, 14, 0.82);
+  border-bottom: 1px solid var(--border-gold);
+  padding: 14px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.brand-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--gold-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+  font-size: 18px;
+  font-weight: bold;
+  color: #1e1b4b;
+}
+
+.brand-text h1 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: linear-gradient(to right, #fef08a, #f59e0b, #fed7aa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-text p {
+  font-size: 11px;
+  color: var(--text-sub);
+  letter-spacing: 1px;
+}
+
+/* 导航 Tabs */
+.nav-tabs {
+  display: flex;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.8);
+  padding: 4px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-sub);
+  padding: 8px 18px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tab-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn.active {
+  background: var(--gold-gradient);
+  color: #0f172a;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+.vip-badge-btn {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.25));
+  border: 1px solid var(--border-gold-bright);
+  color: #fef08a;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vip-badge-btn:hover {
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+  transform: translateY(-1px);
+}
+
+/* 主容器 */
+.main-container {
+  max-width: 1200px;
+  margin: 28px auto;
+  padding: 0 20px 80px;
+}
+
+/* 玻璃卡片 */
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-gold);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  margin-bottom: 24px;
+  transition: border-color 0.25s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(245, 158, 11, 0.45);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.card-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #fef08a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 表单输入组 */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-sub);
+}
+
+.form-control {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #f8fafc;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.form-control:focus {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+}
+
+/* 按钮 */
+.btn-primary {
+  background: var(--gold-gradient);
+  color: #0f172a;
+  font-weight: 600;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 15px;
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.3);
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.45);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* 四柱干支展示区 */
+.pillars-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin: 20px 0;
+}
+
+.pillar-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 14px;
+  padding: 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.pillar-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gold-gradient);
+}
+
+.pillar-name {
+  font-size: 12px;
+  color: var(--text-sub);
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.shishen-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+  display: inline-block;
+  margin-bottom: 8px;
+  color: #cbd5e1;
+}
+
+.gan-char, .zhi-char {
+  font-size: 28px;
+  font-weight: 800;
+  display: block;
+  line-height: 1.2;
+}
+
+.nayin-desc {
+  font-size: 11px;
+  color: #e2e8f0;
+  background: rgba(217, 119, 6, 0.15);
+  border: 1px solid rgba(217, 119, 6, 0.3);
+  border-radius: 6px;
+  padding: 3px 6px;
+  margin-top: 10px;
+}
+
+.canggan-box {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--text-muted);
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-top: 8px;
+}
+
+/* 五行颜色标记 */
+.elem-木 { color: var(--elem-wood); }
+.elem-火 { color: var(--elem-fire); }
+.elem-土 { color: var(--elem-earth); }
+.elem-金 { color: var(--elem-metal); }
+.elem-水 { color: var(--elem-water); }
+
+/* 五行力量柱状图 */
+.elements-bar-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.elem-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.elem-bar-label {
+  width: 45px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.elem-bar-track {
+  flex: 1;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.elem-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 古籍专区卡片（高光） */
+.ancient-book-card {
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.35) 0%, rgba(15, 23, 42, 0.65) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.ancient-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fef08a;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  margin-bottom: 10px;
+}
+
+.ancient-quote {
+  font-family: "Songti SC", "SimSun", serif;
+  font-size: 15px;
+  color: #f8fafc;
+  line-height: 1.8;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid var(--gold-primary);
+  border-radius: 0 8px 8px 0;
+  margin: 8px 0 12px;
+}
+
+.modern-translation {
+  font-size: 13px;
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+
+/* 大运滚动轴 */
+.dayun-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.dayun-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.dayun-scroll::-webkit-scrollbar-thumb {
+  background: rgba(245, 158, 11, 0.3);
+  border-radius: 3px;
+}
+
+.dayun-item {
+  min-width: 110px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* VIP 锁与蒙层 */
+.vip-locked-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.vip-blur-content {
+  filter: blur(5px);
+  user-select: none;
+  pointer-events: none;
+}
+
+.vip-lock-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 9, 14, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 10;
+  padding: 20px;
+  text-align: center;
+}
+
+/* 周易六爻金钱卦 */
+.iching-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 20px 0;
+}
+
+.coins-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.coin {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fde047 30%, #b45309 90%);
+  border: 3px solid #78350f;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 0 8px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #451a03;
+  font-size: 20px;
+  position: relative;
+  transition: transform 0.6s ease;
+}
+
+.coin.flipping {
+  animation: flipCoin 0.6s infinite ease-in-out;
+}
+
+@keyframes flipCoin {
+  0% { transform: rotateY(0deg) scale(1); }
+  50% { transform: rotateY(180deg) scale(1.15); }
+  100% { transform: rotateY(360deg) scale(1); }
+}
+
+.hexagram-board {
+  display: flex;
+  flex-direction: column-reverse; /* 从初爻到上爻由下至上 */
+  gap: 8px;
+  width: 220px;
+}
+
+.hex-line {
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hex-solid {
+  width: 100%;
+  height: 10px;
+  background: var(--gold-gradient);
+  border-radius: 3px;
+}
+
+.hex-broken-left, .hex-broken-right {
+  width: 44%;
+  height: 10px;
+  background: #38bdf8;
+  border-radius: 3px;
+}
+
+/* AI 咨询窗口 */
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  height: 520px;
+  background: rgba(15, 23, 42, 0.85);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chat-bubble {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.chat-bubble.assistant {
+  align-self: flex-start;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: #f1f5f9;
+  border-bottom-left-radius: 4px;
+  white-space: pre-wrap;
+}
+
+.chat-bubble.user {
+  align-self: flex-end;
+  background: var(--gold-gradient);
+  color: #0f172a;
+  font-weight: 500;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-input-area {
+  padding: 14px 18px;
+  background: rgba(10, 14, 23, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  gap: 10px;
+}
+
+/* 模态弹窗 */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-box {
+  background: #111827;
+  border: 1px solid var(--border-gold-bright);
+  border-radius: 20px;
+  padding: 28px;
+  max-width: 480px;
+  width: 90%;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+
+/* 打印与导出 PDF 优化 */
+@media print {
+  .header-nav, .nav-tabs, .btn-primary, .btn-secondary, .chat-input-area, .vip-badge-btn {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .glass-card {
+    border: 1px solid #ccc !important;
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+  .pillar-card {
+    background: #f8fafc !important;
+    border: 1px solid #ccc !important;
+  }
+  .ancient-quote {
+    background: #f1f5f9 !important;
+    color: #1e293b !important;
+  }
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .header-nav {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+  .nav-tabs {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .tab-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .pillars-board {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,0 +1,5 @@
+node_modules/
+.npm/
+*.log
+.wrangler/
+data/export_keys_*.txt

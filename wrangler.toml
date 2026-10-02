@@ -1,0 +1,11 @@
+name = "lingjing-bazi"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "./public"
+
+[vars]
+ADMIN_PASSWORD = "admin888"
+
+# 可选：如果需要在 Cloudflare 上启用持久化分布式 KV 存储卡密
+# [[kv_namespaces]]
+# binding = "FAKA_KV"
+# id = "your-kv-namespace-id"

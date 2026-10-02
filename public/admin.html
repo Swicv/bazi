@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>灵境玄机阁 - 卡密生成与发卡网管理后台</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border-gold);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 32px;
+      font-weight: 800;
+      color: #fef08a;
+      margin: 8px 0;
+    }
+    .key-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 14px;
+    }
+    .key-table th, .key-table td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .key-table th {
+      color: var(--text-sub);
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .status-unused {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .status-used {
+      background: rgba(244, 63, 94, 0.15);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.4);
+    }
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f8fafc;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <header class="header-nav">
+    <div class="brand" onclick="location.href='index.html'">
+      <div class="brand-icon">☯</div>
+      <div class="brand-text">
+        <h1>灵境玄机阁 · 管理后台</h1>
+        <p>发卡网对接 · VIP 卡密批量生成与库存管理</p>
+      </div>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <a href="https://shop.666228.xyz" target="_blank" class="btn-primary" style="text-decoration: none; padding: 7px 14px; font-size: 12px; background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);">
+        🏪 打开官方发卡商城 (shop.666228.xyz)
+      </a>
+      <button class="btn-secondary" onclick="adminLogout()">🚪 退出管理</button>
+      <button class="btn-secondary" onclick="location.href='index.html'">← 返回前台</button>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- 统计卡片 -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div style="font-size: 12px; color: var(--text-sub);">总生成卡密</div>
+        <div class="stat-num" id="stat-total">0</div>
+        <div style="font-size: 12px; color: #94a3b8;">累计发行总量</div>
+      </div>
+      <div class="stat-card">
+        <div style="font-size: 12px; color: var(--text-sub);">可用库存 (未核销)</div>
+        <div class="stat-num" id="stat-unused" style="color: #34d399;">0</div>
+        <div style="font-size: 12px; color: #34d399;">可导入发卡网销售</div>
+      </div>
+      <div class="stat-card">
+        <div style="font-size: 12px; color: var(--text-sub);">已核销使用</div>
+        <div class="stat-num" id="stat-used" style="color: #f43f5e;">0</div>
+        <div style="font-size: 12px; color: #94a3b8;">用户已兑换激活</div>
+      </div>
+    </div>
+
+    <!-- 批量生成卡密面板 -->
+    <div class="glass-card">
+      <div class="card-header">
+        <h2 class="card-title">⚡ 一键批量生成发卡网卡密</h2>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;">
+        <div class="form-group" style="min-width: 160px;">
+          <label class="form-label">生成张数</label>
+          <select id="gen-count" class="form-control">
+            <option value="5">5 张</option>
+            <option value="10" selected>10 张</option>
+            <option value="20">20 张</option>
+            <option value="50">50 张</option>
+            <option value="100">100 张</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="min-width: 180px;">
+          <label class="form-label">卡密前缀 (如 FAKA / VIP / TIANJI)</label>
+          <input type="text" id="gen-prefix" class="form-control" value="FAKA" placeholder="例如 FAKA">
+        </div>
+
+        <div>
+          <button id="btn-generate" class="btn-primary" onclick="generateBatchKeys()">
+            🚀 批量生成卡密
+          </button>
+        </div>
+
+        <div>
+          <button class="btn-secondary" onclick="copyAllUnusedKeys()">
+            📋 一键复制全部未使用卡密 (发卡网导入格式)
+          </button>
+        </div>
+      </div>
+
+      <!-- 最新生成展示框 -->
+      <div id="new-keys-box" style="display: none; margin-top: 20px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-gold-bright); border-radius: 12px; padding: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <strong style="color: #fef08a;">🎉 刚生成的卡密列表（每行一个，已自动入库）：</strong>
+          <button class="copy-btn" onclick="copyNewBatch()">复制本批卡密</button>
+        </div>
+        <textarea id="new-keys-textarea" class="form-control" rows="5" readonly style="font-family: monospace; font-size: 13px;"></textarea>
+      </div>
+    </div>
+
+    <!-- 卡密库存总表 -->
+    <div class="glass-card">
+      <div class="card-header">
+        <h3 class="card-title">📜 完整卡密库与核销状态</h3>
+        <button class="btn-secondary" onclick="loadKeysList()">🔄 刷新列表</button>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="key-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>卡密序列号 (License Key)</th>
+              <th>权益类型</th>
+              <th>生成日期</th>
+              <th>状态</th>
+              <th>核销时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="keys-tbody">
+            <tr><td colspan="7" style="text-align: center; color: var(--text-muted);">正在加载卡密库...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 管理员登录鉴权弹窗 -->
+  <div class="modal-overlay" id="admin-login-modal">
+    <div class="modal-box" style="max-width: 400px; text-align: center;">
+      <div style="font-size: 36px; margin-bottom: 10px;">🔒</div>
+      <h3 style="color: #fef08a; font-size: 18px; margin-bottom: 6px;">管理员身份验证</h3>
+      <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 20px;">
+        此区域仅供商城店长进入，请输入后台管理密码以继续。
+      </p>
+
+      <form id="admin-login-form" onsubmit="handleAdminLogin(event)">
+        <div class="form-group" style="margin-bottom: 18px; text-align: left;">
+          <label class="form-label">管理安全密码</label>
+          <input type="password" id="admin-pass-input" class="form-control" placeholder="请输入管理员密码" required autofocus>
+          <span style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">* 系统默认初始密码为: admin888</span>
+        </div>
+
+        <button type="submit" id="btn-login-submit" class="btn-primary" style="width: 100%;">
+          🔐 验证并进入后台
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let allKeys = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      checkAuthAndInit();
+    });
+
+    function getAdminToken() {
+      return sessionStorage.getItem("lingjing_admin_token") || "";
+    }
+
+    function checkAuthAndInit() {
+      const token = getAdminToken();
+      const modal = document.getElementById("admin-login-modal");
+      if (!token) {
+        modal.classList.add("active");
+      } else {
+        modal.classList.remove("active");
+        loadKeysList();
+      }
+    }
+
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      const pass = document.getElementById("admin-pass-input").value.trim();
+      const btn = document.getElementById("btn-login-submit");
+      btn.disabled = true;
+      btn.innerText = "正在验证...";
+
+      try {
+        const res = await fetch("/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: pass })
+        });
+        const data = await res.json();
+        if (data.success) {
+          sessionStorage.setItem("lingjing_admin_token", data.token);
+          document.getElementById("admin-login-modal").classList.remove("active");
+          loadKeysList();
+        } else {
+          alert("验证失败: " + (data.message || "密码错误"));
+        }
+      } catch (err) {
+        alert("网络通信异常，请重试");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "🔐 验证并进入后台";
+      }
+    }
+
+    function adminLogout() {
+      sessionStorage.removeItem("lingjing_admin_token");
+      location.reload();
+    }
+
+    async function loadKeysList() {
+      const token = getAdminToken();
+      if (!token) return;
+
+      try {
+        const res = await fetch("/api/admin/keys", {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        if (res.status === 401) {
+          adminLogout();
+          return;
+        }
+        const data = await res.json();
+        
+        allKeys = data.keys || [];
+        document.getElementById("stat-total").innerText = data.total;
+        document.getElementById("stat-unused").innerText = data.unusedCount;
+        document.getElementById("stat-used").innerText = data.usedCount;
+
+        renderTable(allKeys);
+      } catch (err) {
+        alert("获取卡密库失败");
+      }
+    }
+
+    function renderTable(keys) {
+      const tbody = document.getElementById("keys-tbody");
+      if (!keys || keys.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">暂无卡密记录</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = keys.map((k, idx) => `
+        <tr>
+          <td>${idx + 1}</td>
+          <td style="font-family: monospace; font-weight: bold; color: #f8fafc;">${k.key}</td>
+          <td><span class="ancient-badge">${k.type === "permanent_vip" ? "永久VIP" : k.type}</span></td>
+          <td style="color: var(--text-sub);">${k.created_at || "-"}</td>
+          <td>
+            <span class="status-badge ${k.used ? 'status-used' : 'status-unused'}">
+              ${k.used ? '● 已核销' : '● 未使用'}
+            </span>
+          </td>
+          <td style="color: var(--text-sub); font-size: 11px;">${k.used_at ? new Date(k.used_at).toLocaleString() : "-"}</td>
+          <td>
+            <button class="copy-btn" onclick="copyText('${k.key}')">复制</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    async function generateBatchKeys() {
+      const count = document.getElementById("gen-count").value;
+      const prefix = document.getElementById("gen-prefix").value.trim() || "FAKA";
+      const btn = document.getElementById("btn-generate");
+      const token = getAdminToken();
+
+      btn.disabled = true;
+      btn.innerText = "生成中...";
+
+      try {
+        const res = await fetch("/api/admin/generate", {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ count, prefix })
+        });
+        if (res.status === 401) {
+          adminLogout();
+          return;
+        }
+        const data = await res.json();
+
+        if (data.success) {
+          const textarea = document.getElementById("new-keys-textarea");
+          textarea.value = data.generatedKeys.join("\n");
+          document.getElementById("new-keys-box").style.display = "block";
+          alert(`🎉 成功生成 ${data.count} 张新卡密！已自动入库。`);
+          loadKeysList();
+        } else {
+          alert("生成失败: " + (data.error || "未知异常"));
+        }
+      } catch (err) {
+        alert("网络请求失败");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "🚀 批量生成卡密";
+      }
+    }
+
+    function copyText(txt) {
+      navigator.clipboard.writeText(txt).then(() => {
+        alert("已复制到剪贴板: " + txt);
+      });
+    }
+
+    function copyNewBatch() {
+      const txt = document.getElementById("new-keys-textarea").value;
+      navigator.clipboard.writeText(txt).then(() => {
+        alert("已复制本批卡密到剪贴板，可直接粘贴导入发卡网！");
+      });
+    }
+
+    function copyAllUnusedKeys() {
+      const unused = allKeys.filter(k => !k.used).map(k => k.key);
+      if (unused.length === 0) {
+        alert("当前没有未使用的卡密库存，请先生成！");
+        return;
+      }
+      navigator.clipboard.writeText(unused.join("\n")).then(() => {
+        alert(`已成功复制全部 ${unused.length} 张未使用的卡密！直接在发卡网商品库存粘贴即可。`);
+      });
+    }
+  </script>
+</body>
+</html>

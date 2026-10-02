@@ -1,0 +1,68 @@
+{
+  "system_config": {
+    "vip_price": 68,
+    "vip_perks": [
+      "解锁《穷通宝鉴》与《三命通会》全部深度古籍秘传批注",
+      "终身十年大运吉凶起伏走势图与深度详批",
+      "未来三年流年干支事业、财运、情感专项精析",
+      "灵境 AI 国学宗师无限次追问解惑",
+      "一键生成并导出全篇精美国风长卷 PDF 命盘报告"
+    ]
+  },
+  "keys": {
+    "TIANJI-8888-9999": {
+      "type": "permanent_vip",
+      "created_at": "2026-10-01",
+      "used": false,
+      "used_at": null
+    },
+    "XUANJI-6666-7777": {
+      "type": "permanent_vip",
+      "created_at": "2026-10-01",
+      "used": false,
+      "used_at": null
+    },
+    "LINGJING-2026-VIP": {
+      "type": "permanent_vip",
+      "created_at": "2026-10-01",
+      "used": true,
+      "used_at": "2026-10-02T08:20:24.176Z"
+    },
+    "GUOXUE-TEST-PASS": {
+      "type": "permanent_vip",
+      "created_at": "2026-10-01",
+      "used": false,
+      "used_at": null
+    },
+    "TIANJI-GMHL-4YDC-BCU8": {
+      "type": "permanent_vip",
+      "created_at": "2026-10-02",
+      "used": false,
+      "used_at": null
+    },
+    "TIANJI-QKHY-PTCT-DS9G": {
+      "type": "permanent_vip",
+      "created_at": "2026-10-02",
+      "used": false,
+      "used_at": null
+    },
+    "TIANJI-PTM8-AMLU-H892": {
+      "type": "permanent_vip",
+      "created_at": "2026-10-02",
+      "used": false,
+      "used_at": null
+    },
+    "TIANJI-SWZ6-ULNB-SK9W": {
+      "type": "permanent_vip",
+      "created_at": "2026-10-02",
+      "used": false,
+      "used_at": null
+    },
+    "TIANJI-QR2L-MLWZ-CKXC": {
+      "type": "permanent_vip",
+      "created_at": "2026-10-02",
+      "used": true,
+      "used_at": "2026-10-02T08:17:18.602Z"
+    }
+  }
+}

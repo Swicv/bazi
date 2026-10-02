@@ -1,0 +1,20 @@
+{
+  "name": "lingjing-metaphysics",
+  "version": "1.0.0",
+  "description": "灵境玄机阁 - 周易八字国学智能测算平台",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node -e 'const b = require(\"./lib/bazi.js\"); const c = require(\"./lib/calendar.js\"); console.log(\"All modules load successfully!\");'"
+  },
+  "keywords": [
+    "bazi",
+    "yijing",
+    "iching",
+    "metaphysics",
+    "chinese-astrology",
+    "fortune-telling"
+  ],
+  "author": "Antigravity",
+  "license": "MIT"
+}
