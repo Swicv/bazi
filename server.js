@@ -258,7 +258,7 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin888";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "Aa666333";
 
 // 辅助：校验管理员权限
 function checkAdminAuth(req) {

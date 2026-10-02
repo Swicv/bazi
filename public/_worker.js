@@ -1292,7 +1292,7 @@ export default {
       });
     }
 
-    const ADMIN_PASSWORD = env.ADMIN_PASSWORD || "admin888";
+    const ADMIN_PASSWORD = env.ADMIN_PASSWORD || "Aa666333";
 
     // 鉴权检查
     function checkAuth() {
