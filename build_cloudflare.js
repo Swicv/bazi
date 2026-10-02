@@ -16,6 +16,7 @@ const ichingData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "iching_64.jso
 const booksLibrary = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "books_library.json"), "utf-8"));
 const licenseKeys = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "license_keys.json"), "utf-8"));
 const chinaCitiesData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "china_cities.json"), "utf-8"));
+const appConfigData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "app_config.json"), "utf-8"));
 
 // 提取核心算法代码
 const calendarCode = fs.readFileSync(path.join(__dirname, "lib/calendar.js"), "utf-8")
@@ -48,6 +49,7 @@ const ichingData = ${JSON.stringify(ichingData)};
 const booksLibrary = ${JSON.stringify(booksLibrary)};
 let localLicenseKeys = ${JSON.stringify(licenseKeys)};
 const chinaCitiesData = ${JSON.stringify(chinaCitiesData)};
+let localAppConfig = ${JSON.stringify(appConfigData)};
 
 ${calendarCode}
 ${baziCode}
@@ -157,6 +159,18 @@ export default {
         cities: Object.keys(CITY_LONGITUDES),
         longitudes: CITY_LONGITUDES
       });
+    }
+
+    // 1.1 获取公共系统配置
+    if (pathname === "/api/config" && method === "GET") {
+      let cfg = localAppConfig;
+      if (env.FAKA_KV) {
+        try {
+          const kvCfg = await env.FAKA_KV.get("app_config", "json");
+          if (kvCfg) cfg = kvCfg;
+        } catch(e) {}
+      }
+      return jsonResponse(cfg);
     }
 
     // 2. 八字排盘与多维报告生成
@@ -284,7 +298,32 @@ export default {
       return jsonResponse({ success: true, count: newKeys.length, generatedKeys: newKeys });
     }
 
-    // 10. 静态页面回源托管 (Cloudflare Pages 自动托管 public/ 目录)
+    // 10. 管理员修改商城配置
+    if (pathname === "/api/admin/config" && method === "POST") {
+      if (!checkAuth()) {
+        return jsonResponse({ success: false, error: "未授权" }, 401);
+      }
+      try {
+        const body = await request.json();
+        if (body.shopUrl) {
+          let urlStr = body.shopUrl.trim();
+          if (!urlStr.startsWith("http://") && !urlStr.startsWith("https://")) {
+            urlStr = "https://" + urlStr;
+          }
+          localAppConfig.shopUrl = urlStr;
+        }
+        if (env.FAKA_KV) {
+          try {
+            await env.FAKA_KV.put("app_config", JSON.stringify(localAppConfig));
+          } catch (e) {}
+        }
+        return jsonResponse({ success: true, message: "商城配置已保存并全站生效", config: localAppConfig });
+      } catch (err) {
+        return jsonResponse({ success: false, error: "格式错误" }, 400);
+      }
+    }
+
+    // 11. 静态页面回源托管 (Cloudflare Pages 自动托管 public/ 目录)
     return env.ASSETS.fetch(request);
   }
 };

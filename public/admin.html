@@ -85,8 +85,8 @@
       </div>
     </div>
     <div style="display: flex; gap: 10px; align-items: center;">
-      <a href="https://shop.666228.xyz" target="_blank" class="btn-primary" style="text-decoration: none; padding: 7px 14px; font-size: 12px; background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);">
-        🏪 打开官方发卡商城 (shop.666228.xyz)
+      <a href="https://shop.swicv.com" id="admin-header-shop-link" target="_blank" class="btn-primary" style="text-decoration: none; padding: 7px 14px; font-size: 12px; background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);">
+        🏪 打开官方发卡商城 (shop.swicv.com)
       </a>
       <button class="btn-secondary" onclick="adminLogout()">🚪 退出管理</button>
       <button class="btn-secondary" onclick="location.href='index.html'">← 返回前台</button>
@@ -94,6 +94,34 @@
   </header>
 
   <main class="main-container">
+
+    <!-- 商城与系统配置面板 -->
+    <div class="glass-card" style="margin-bottom: 24px;">
+      <div class="card-header">
+        <h2 class="card-title">⚙️ 官方发卡商城地址设置</h2>
+        <span style="font-size: 12px; color: var(--text-sub);">前台所有“前往购买卡密”跳转链接将自动同步生效</span>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end;">
+        <div class="form-group" style="flex: 1; min-width: 260px;">
+          <label class="form-label">发卡商城购卡网址 (Shop URL)</label>
+          <input type="url" id="input-shop-url" class="form-control" placeholder="例如: https://shop.swicv.com" value="https://shop.swicv.com">
+        </div>
+        <div>
+          <button class="btn-primary" onclick="saveShopConfig()">
+            💾 保存并全站生效
+          </button>
+        </div>
+        <div>
+          <a id="btn-preview-shop" href="https://shop.swicv.com" target="_blank" class="btn-secondary" style="display: inline-flex; text-decoration: none; align-items: center; gap: 4px; padding: 11px 18px;">
+            🔗 立即测试打开
+          </a>
+        </div>
+      </div>
+      <div style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">
+        * 提示：更改保存后无需重新部署，前台所有“购买卡密”跳转按钮以及店长顶栏快捷链接均会实时生效。
+      </div>
+    </div>
 
     <!-- 统计卡片 -->
     <div class="stat-grid">
@@ -230,6 +258,7 @@
       } else {
         modal.classList.remove("active");
         loadKeysList();
+        loadShopConfig();
       }
     }
 
@@ -251,6 +280,7 @@
           sessionStorage.setItem("lingjing_admin_token", data.token);
           document.getElementById("admin-login-modal").classList.remove("active");
           loadKeysList();
+          loadShopConfig();
         } else {
           alert("验证失败: " + (data.message || "密码错误"));
         }
@@ -259,6 +289,70 @@
       } finally {
         btn.disabled = false;
         btn.innerText = "🔐 验证并进入后台";
+      }
+    }
+
+    // 载入发卡商城配置
+    async function loadShopConfig() {
+      try {
+        const res = await fetch("/api/config");
+        const data = await res.json();
+        if (data && data.shopUrl) {
+          const input = document.getElementById("input-shop-url");
+          if (input) input.value = data.shopUrl;
+          updateAdminShopLinks(data.shopUrl);
+        }
+      } catch (err) {
+        console.error("读取商城配置失败", err);
+      }
+    }
+
+    function updateAdminShopLinks(url) {
+      const headerLink = document.getElementById("admin-header-shop-link");
+      const previewLink = document.getElementById("btn-preview-shop");
+      let host = "shop.swicv.com";
+      try { host = new URL(url).hostname || host; } catch (e) {}
+
+      if (headerLink) {
+        headerLink.href = url;
+        headerLink.innerHTML = `🏪 打开官方发卡商城 (${host})`;
+      }
+      if (previewLink) {
+        previewLink.href = url;
+      }
+    }
+
+    // 保存商城配置
+    async function saveShopConfig() {
+      const token = getAdminToken();
+      const input = document.getElementById("input-shop-url");
+      const inputUrl = input ? input.value.trim() : "";
+      if (!inputUrl) {
+        alert("请输入有效的发卡商城地址");
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/admin/config", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ shopUrl: inputUrl })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("✅ 发卡商城地址已保存！前台所有跳转链接与店长顶栏已立即全网同步生效。");
+          if (data.config && data.config.shopUrl) {
+            input.value = data.config.shopUrl;
+            updateAdminShopLinks(data.config.shopUrl);
+          }
+        } else {
+          alert("保存失败: " + (data.error || data.message || "未知原因"));
+        }
+      } catch (err) {
+        alert("保存网络异常，请重试");
       }
     }
 

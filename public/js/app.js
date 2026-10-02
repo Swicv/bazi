@@ -15,10 +15,42 @@ document.addEventListener("DOMContentLoaded", () => {
   initCities();
   initForm();
   initVipStatus();
+  initShopConfig();
   
   // 默认自动触发一次经典测试案例排盘
   loadSampleCase();
 });
+
+// 动态载入发卡商城配置
+async function initShopConfig() {
+  try {
+    const res = await fetch("/api/config");
+    const data = await res.json();
+    if (data && data.shopUrl) {
+      applyShopUrl(data.shopUrl);
+    }
+  } catch (err) {
+    applyShopUrl("https://shop.swicv.com");
+  }
+}
+
+function applyShopUrl(url) {
+  const shopLinks = document.querySelectorAll(".shop-buy-link");
+  let displayDomain = "shop.swicv.com";
+  try {
+    const u = new URL(url);
+    displayDomain = u.hostname || displayDomain;
+  } catch (e) {}
+
+  shopLinks.forEach(link => {
+    link.href = url;
+    if (link.dataset.type === "overlay") {
+      link.innerHTML = `🛒 购买卡密 (${displayDomain})`;
+    } else if (link.dataset.type === "modal") {
+      link.innerHTML = `🛒 前往自动发卡商城购买卡密 (${displayDomain}) &rarr;`;
+    }
+  });
+}
 
 // 初始化省市二级联动与真太阳时城市体系
 function initCities() {

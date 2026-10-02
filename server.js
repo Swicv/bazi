@@ -186,6 +186,20 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
+  // 1.1 API: 获取公共配置（发卡商城地址等）
+  if (pathname === "/api/config" && method === "GET") {
+    try {
+      const cfgPath = path.join(DATA_DIR, "app_config.json");
+      let cfg = { shopUrl: "https://shop.swicv.com" };
+      if (fs.existsSync(cfgPath)) {
+        cfg = JSON.parse(fs.readFileSync(cfgPath, "utf-8"));
+      }
+      return sendJson(res, 200, cfg);
+    } catch (e) {
+      return sendJson(res, 200, { shopUrl: "https://shop.swicv.com" });
+    }
+  }
+
   // 2. API: 八字排盘与多维报告生成
   if (pathname === "/api/bazi/calculate" && method === "POST") {
     try {
@@ -358,6 +372,32 @@ function checkAdminAuth(req) {
       });
     } catch (err) {
       return sendJson(res, 500, { error: "生成卡密失败" });
+    }
+  }
+
+  // 10. API: 管理员修改商城配置
+  if (pathname === "/api/admin/config" && method === "POST") {
+    if (!checkAdminAuth(req)) {
+      return sendJson(res, 401, { success: false, error: "未授权：请先输入管理员密码" });
+    }
+    try {
+      const body = await parseJsonBody(req);
+      const cfgPath = path.join(DATA_DIR, "app_config.json");
+      let cfg = { shopUrl: "https://shop.swicv.com" };
+      if (fs.existsSync(cfgPath)) {
+        try { cfg = JSON.parse(fs.readFileSync(cfgPath, "utf-8")); } catch(e) {}
+      }
+      if (body.shopUrl) {
+        let urlStr = body.shopUrl.trim();
+        if (!/^https?:\/\//i.test(urlStr)) {
+          urlStr = "https://" + urlStr;
+        }
+        cfg.shopUrl = urlStr;
+      }
+      fs.writeFileSync(cfgPath, JSON.stringify(cfg, null, 2), "utf-8");
+      return sendJson(res, 200, { success: true, message: "商城配置已保存并立即生效", config: cfg });
+    } catch (err) {
+      return sendJson(res, 500, { success: false, error: "保存配置失败" });
     }
   }
 
