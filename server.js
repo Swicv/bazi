@@ -174,7 +174,13 @@ const server = http.createServer(async (req, res) => {
 
   // 1. API: 获取城市列表与真太阳时经度
   if (pathname === "/api/cities" && method === "GET") {
+    let provinces = [];
+    try {
+      const cData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "china_cities.json"), "utf-8"));
+      provinces = cData.provinces || [];
+    } catch(e) {}
     return sendJson(res, 200, {
+      provinces: provinces,
       cities: Object.keys(CITY_LONGITUDES),
       longitudes: CITY_LONGITUDES
     });

@@ -20,24 +20,176 @@ document.addEventListener("DOMContentLoaded", () => {
   loadSampleCase();
 });
 
-// 初始化城市列表
-async function initCities() {
+// 初始化省市二级联动与真太阳时城市体系
+function initCities() {
+  const provinceSelect = document.getElementById("input-province");
   const citySelect = document.getElementById("input-city");
-  try {
-    const res = await fetch("/api/cities");
-    const data = await res.json();
-    state.cities = data.cities;
-    citySelect.innerHTML = "";
-    data.cities.forEach(c => {
+  const searchInput = document.getElementById("city-search");
+  const solarBadge = document.getElementById("city-solar-badge");
+  const quickTags = document.querySelectorAll(".city-quick-tag");
+
+  const provinces = window.CHINA_PROVINCES || [];
+  const longitudes = window.CITY_LONGITUDES || {};
+
+  // 1. 填充省份下拉框
+  if (provinceSelect) {
+    provinceSelect.innerHTML = "";
+    provinces.forEach(p => {
       const opt = document.createElement("option");
-      opt.value = c;
-      opt.innerText = c;
-      if (c === "北京") opt.selected = true;
-      citySelect.appendChild(opt);
+      opt.value = p.province;
+      opt.innerText = p.province;
+      if (p.province === "直辖市") opt.selected = true;
+      provinceSelect.appendChild(opt);
     });
-  } catch (err) {
-    citySelect.innerHTML = `<option value="北京">北京 (116.4°E)</option>`;
   }
+
+  // 2. 根据选中的省份填充城市下拉框
+  function updateCitiesForProvince(provName, selectCityName = null) {
+    const pData = provinces.find(p => p.province === provName) || provinces[0];
+    if (citySelect) {
+      citySelect.innerHTML = "";
+      if (pData && pData.cities) {
+        pData.cities.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c.name;
+          opt.innerText = `${c.name} (${c.lon}°E)`;
+          if (selectCityName && c.name === selectCityName) {
+            opt.selected = true;
+          } else if (!selectCityName && c.name === "北京") {
+            opt.selected = true;
+          }
+          citySelect.appendChild(opt);
+        });
+      }
+    }
+    updateSolarBadge();
+  }
+
+  // 3. 更新真太阳时提示徽章
+  function updateSolarBadge() {
+    const curProv = provinceSelect ? provinceSelect.value : "直辖市";
+    const curCity = citySelect ? citySelect.value : "北京";
+    const lon = longitudes[curCity] || 120.0;
+    const diff = Math.round((lon - 120.0) * 4 * 10) / 10;
+    let diffText = "";
+    if (diff > 0) {
+      diffText = `真太阳时较北京时间快约 ${diff} 分钟`;
+    } else if (diff < 0) {
+      diffText = `真太阳时较北京时间慢约 ${Math.abs(diff)} 分钟`;
+    } else {
+      diffText = "真太阳时与北京时间基本一致";
+    }
+
+    if (solarBadge) {
+      solarBadge.innerHTML = `📍 ${curProv} · ${curCity} (${lon}°E) | ${diffText}`;
+    }
+
+    // 同步高亮快捷标签
+    quickTags.forEach(tag => {
+      if (tag.dataset.city === curCity) {
+        tag.classList.add("active");
+      } else {
+        tag.classList.remove("active");
+      }
+    });
+  }
+
+  // 省份切换监听
+  if (provinceSelect) {
+    provinceSelect.addEventListener("change", () => {
+      updateCitiesForProvince(provinceSelect.value);
+    });
+  }
+
+  // 城市切换监听
+  if (citySelect) {
+    citySelect.addEventListener("change", () => {
+      updateSolarBadge();
+    });
+  }
+
+  // 快捷标签点击监听
+  quickTags.forEach(tag => {
+    tag.addEventListener("click", () => {
+      const p = tag.dataset.province;
+      const c = tag.dataset.city;
+      selectCityByName(c, p);
+    });
+  });
+
+  // 搜索框实时过滤匹配
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      const query = e.target.value.trim().toLowerCase();
+      if (!query) return;
+
+      for (const p of provinces) {
+        for (const c of p.cities) {
+          if (c.name.includes(query) || (query.length >= 2 && p.province.includes(query))) {
+            selectCityByName(c.name, p.province);
+            return;
+          }
+        }
+      }
+    });
+  }
+
+  // 默认初始化直辖市·北京
+  updateCitiesForProvince("直辖市", "北京");
+}
+
+// 通过城市名精确定位并联动选择
+function selectCityByName(cityName, provinceName = null) {
+  const provinceSelect = document.getElementById("input-province");
+  const citySelect = document.getElementById("input-city");
+  const provinces = window.CHINA_PROVINCES || [];
+
+  let targetProv = provinceName;
+  if (!targetProv) {
+    for (const p of provinces) {
+      if (p.cities.some(c => c.name === cityName)) {
+        targetProv = p.province;
+        break;
+      }
+    }
+  }
+
+  if (targetProv && provinceSelect) {
+    provinceSelect.value = targetProv;
+    const pData = provinces.find(p => p.province === targetProv);
+    if (pData && citySelect) {
+      citySelect.innerHTML = "";
+      pData.cities.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.name;
+        opt.innerText = `${c.name} (${c.lon}°E)`;
+        if (c.name === cityName) opt.selected = true;
+        citySelect.appendChild(opt);
+      });
+      citySelect.value = cityName;
+    }
+  } else if (citySelect) {
+    citySelect.value = cityName;
+  }
+
+  // 触发一次更新徽章
+  const solarBadge = document.getElementById("city-solar-badge");
+  const longitudes = window.CITY_LONGITUDES || {};
+  const lon = longitudes[cityName] || 120.0;
+  const diff = Math.round((lon - 120.0) * 4 * 10) / 10;
+  let diffText = diff > 0 ? `快约 ${diff} 分钟` : (diff < 0 ? `慢约 ${Math.abs(diff)} 分钟` : "一致");
+  if (solarBadge) {
+    solarBadge.innerHTML = `📍 ${targetProv || ""} · ${cityName} (${lon}°E) | 真太阳时较北京时间${diffText}`;
+  }
+
+  // 快捷标签高亮
+  document.querySelectorAll(".city-quick-tag").forEach(tag => {
+    if (tag.dataset.city === cityName) {
+      tag.classList.add("active");
+    } else {
+      tag.classList.remove("active");
+    }
+  });
 }
 
 // 标签页切换
@@ -70,7 +222,7 @@ function loadSampleCase() {
   document.getElementById("input-hour").value = "14";
   document.getElementById("input-minute").value = "30";
   document.getElementById("input-gender").value = "男";
-  document.getElementById("input-city").value = "北京";
+  selectCityByName("北京", "直辖市");
 
   calculateBaZi();
 }
@@ -97,7 +249,7 @@ async function calculateBaZi() {
     hour: document.getElementById("input-hour").value,
     minute: document.getElementById("input-minute").value,
     gender: document.getElementById("input-gender").value,
-    cityName: document.getElementById("input-city").value
+    cityName: (document.getElementById("input-city") && document.getElementById("input-city").value) || "北京"
   };
 
   try {

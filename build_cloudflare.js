@@ -15,6 +15,7 @@ const sanMingData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "sanming.json
 const ichingData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "iching_64.json"), "utf-8"));
 const booksLibrary = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "books_library.json"), "utf-8"));
 const licenseKeys = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "license_keys.json"), "utf-8"));
+const chinaCitiesData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "china_cities.json"), "utf-8"));
 
 // 提取核心算法代码
 const calendarCode = fs.readFileSync(path.join(__dirname, "lib/calendar.js"), "utf-8")
@@ -46,6 +47,7 @@ const sanMingData = ${JSON.stringify(sanMingData)};
 const ichingData = ${JSON.stringify(ichingData)};
 const booksLibrary = ${JSON.stringify(booksLibrary)};
 let localLicenseKeys = ${JSON.stringify(licenseKeys)};
+const chinaCitiesData = ${JSON.stringify(chinaCitiesData)};
 
 ${calendarCode}
 ${baziCode}
@@ -151,6 +153,7 @@ export default {
     // 1. 获取城市列表
     if (pathname === "/api/cities" && method === "GET") {
       return jsonResponse({
+        provinces: chinaCitiesData.provinces,
         cities: Object.keys(CITY_LONGITUDES),
         longitudes: CITY_LONGITUDES
       });
