@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initCities();
   initForm();
   initVipStatus();
-  initChat();
   
   // 默认自动触发一次经典测试案例排盘
   loadSampleCase();
@@ -200,6 +199,22 @@ function renderBaZiResult(chart, report) {
   document.getElementById("sm-original-text").innerText = `“${sm.originalText}”`;
   document.getElementById("sm-modern-text").innerText = sm.modernExplanation;
 
+  // 子平真诠
+  const zp = report.ancientBooks.ziping;
+  if (zp) {
+    document.getElementById("zp-source-title").innerText = `${zp.book} · 【${zp.geju}】`;
+    document.getElementById("zp-original-text").innerText = `“${zp.originalText}”`;
+    document.getElementById("zp-modern-text").innerText = zp.modernExplanation;
+  }
+
+  // 滴天髓
+  const dt = report.ancientBooks.diTianSui;
+  if (dt) {
+    document.getElementById("dt-source-title").innerText = `${dt.book} · 【${dt.section}】`;
+    document.getElementById("dt-original-text").innerText = `“${dt.originalText}”`;
+    document.getElementById("dt-modern-text").innerText = dt.modernExplanation;
+  }
+
   // 7. 多维细分报告
   // 核心性格
   const personUl = document.getElementById("report-personality-list");
@@ -337,97 +352,6 @@ async function verifyLicenseKey() {
     }
   } catch (err) {
     alert("核销请求异常，请检查网络");
-  }
-}
-
-// AI 智能顾问流式问答
-function initChat() {
-  const sendBtn = document.getElementById("chat-send-btn");
-  const input = document.getElementById("chat-input");
-
-  sendBtn.addEventListener("click", () => sendChatMessage());
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") sendChatMessage();
-  });
-
-  // 快捷问题标签
-  document.querySelectorAll(".quick-q-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      input.value = btn.innerText;
-      sendChatMessage();
-    });
-  });
-}
-
-async function sendChatMessage() {
-  const input = document.getElementById("chat-input");
-  const question = input.value.trim();
-  if (!question) return;
-
-  if (!state.currentChart) {
-    alert("请先在上方的“八字精算”中生成命盘，以便 AI 宗师为您按盘推演！");
-    return;
-  }
-
-  input.value = "";
-  appendChatBubble("user", question);
-
-  const assistantBubble = appendChatBubble("assistant", "正在结合《三命通会》与《穷通宝鉴》易理沉思推演中...");
-
-  try {
-    const res = await fetch("/api/ai/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        question,
-        chart: state.currentChart,
-        report: state.currentReport
-      })
-    });
-
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder("utf-8");
-    let aiText = "";
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      const chunk = decoder.decode(value);
-      const lines = chunk.split("\n");
-
-      for (const line of lines) {
-        if (line.startsWith("data: ")) {
-          const content = line.slice(6).trim();
-          if (content === "[DONE]") break;
-          try {
-            const parsed = JSON.parse(content);
-            if (parsed.text) {
-              aiText += parsed.text;
-              assistantBubble.innerText = aiText;
-            } else if (parsed.choices?.[0]?.delta?.content) {
-              aiText += parsed.choices[0].delta.content;
-              assistantBubble.innerText = aiText;
-            }
-          } catch (e) {}
-        }
-      }
-    }
-  } catch (err) {
-    assistantBubble.innerText = "抱歉，玄机推演发生异常，请重试。";
-  }
-}
-
-function appendChatBubble(role, text) {
-  const container = document.getElementById("chat-messages-container");
-  const bubble = document.createElement("div");
-  bubble.className = `chat-bubble ${role}`;
-  bubble.innerText = text;
-  container.appendChild(bubble);
-  container.scrollTop = container.scrollHeight;
-  return bubble;
-}
-
 // 打印导出 PDF
 function exportReportPdf() {
   if (!state.isVip) {

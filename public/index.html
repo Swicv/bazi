@@ -25,7 +25,6 @@
       <button class="tab-btn active" data-tab="bazi">🔮 八字精算</button>
       <button class="tab-btn" data-tab="iching">🪙 周易金钱卦</button>
       <button class="tab-btn" data-tab="library">📜 国学藏经阁</button>
-      <button class="tab-btn" data-tab="ai">🤖 AI国学宗师</button>
     </nav>
 
     <!-- VIP 卡密入口 -->
@@ -188,6 +187,20 @@
             <div class="ancient-quote" id="sm-original-text"></div>
             <p class="modern-translation"><strong>【现代生活指引】：</strong><span id="sm-modern-text"></span></p>
           </div>
+
+          <!-- 子平真诠 -->
+          <div class="ancient-book-card">
+            <div class="ancient-badge" id="zp-source-title">《子平真诠》</div>
+            <div class="ancient-quote" id="zp-original-text"></div>
+            <p class="modern-translation"><strong>【格局成败指引】：</strong><span id="zp-modern-text"></span></p>
+          </div>
+
+          <!-- 滴天髓 -->
+          <div class="ancient-book-card">
+            <div class="ancient-badge" id="dt-source-title">《滴天髓阐微》</div>
+            <div class="ancient-quote" id="dt-original-text"></div>
+            <p class="modern-translation"><strong>【清浊体用总论】：</strong><span id="dt-modern-text"></span></p>
+          </div>
         </div>
 
         <!-- VIP 深度解锁模块包裹层 -->
@@ -330,36 +343,6 @@
 
       <div id="library-container">
         <p style="color: var(--text-muted);">正在取阅藏经阁典籍...</p>
-      </div>
-    </section>
-
-    <!-- ==================== TAB 4: AI 国学宗师 ==================== -->
-    <section class="tab-pane" id="pane-ai" style="display: none;">
-      <div class="glass-card">
-        <div class="card-header">
-          <h2 class="card-title">🤖 灵境玄机 · AI 国学宗师在线解惑</h2>
-          <span style="font-size: 12px; color: var(--text-sub);">基于当前命盘深度推演 · 实时流式对答</span>
-        </div>
-
-        <!-- 快捷问答按钮 -->
-        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px;">
-          <button class="btn-secondary quick-q-btn">我命局里最适合深耕什么行业？</button>
-          <button class="btn-secondary quick-q-btn">从八字看我更适合创业还是稳定任职？</button>
-          <button class="btn-secondary quick-q-btn">我的财富积蓄趋势和理财建议是什么？</button>
-          <button class="btn-secondary quick-q-btn">我的感情与另一半具有哪些性格特征？</button>
-        </div>
-
-        <div class="chat-window">
-          <div class="chat-messages" id="chat-messages-container">
-            <div class="chat-bubble assistant">
-              缘主您好！我是灵境玄机阁的国学宗师顾问。请先在“八字精算”中生成您的专属命盘，随后向我提出关于事业抉择、财运走势、人际契合等方面的疑问，我将结合《穷通宝鉴》与《三命通会》的易理为您剖析解答。
-            </div>
-          </div>
-          <div class="chat-input-area">
-            <input type="text" id="chat-input" class="form-control" placeholder="请输入您想探寻的具体疑惑（如：今年适合换工作吗？）" style="flex: 1;">
-            <button id="chat-send-btn" class="btn-primary">发送求问</button>
-          </div>
-        </div>
       </div>
     </section>
 

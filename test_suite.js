@@ -7,7 +7,6 @@ const assert = require("assert");
 const http = require("http");
 const { fullBaZiChart } = require("./lib/bazi");
 const { generateComprehensiveReport } = require("./lib/analyzer");
-const { generateHeuristicResponse } = require("./lib/ai_advisor");
 
 async function runTests() {
   console.log("=== 1. 测试八字高精度排盘与真太阳时计算 ===");
@@ -46,13 +45,18 @@ async function runTests() {
   assert.ok(report.futureYears.length === 3, "应生成三年流年运势推演");
   console.log(" 古籍数字化匹配与命理报告：测试全部通过！");
 
-  console.log("\n=== 3. 测试 AI 国学顾问易学推理回复 ===");
-  const testQuestion = "我适合什么时候换工作，我的财运怎么样？";
-  const aiAnswer = generateHeuristicResponse(testQuestion, chart, report);
-  console.log(" AI 生成解读样本 (前 150 字):", aiAnswer.slice(0, 150).replace(/\n/g, " ") + "...");
-  assert.ok(aiAnswer.includes("事业职场与行业抉择"), "应智能识别用户关于工作的疑问");
-  assert.ok(aiAnswer.includes("戊土"), "AI 解读应结合日主元神");
-  console.log(" AI 顾问推理与心理学润色：测试全部通过！");
+  console.log("\n=== 3. 测试深度扩充古籍库（《子平真诠》与《滴天髓》及十二长生） ===");
+  console.log(" 《子平真诠》格局评注:", report.ancientBooks.ziping.book, "【" + report.ancientBooks.ziping.geju + "】");
+  console.log(" 《子平真诠》原文:", report.ancientBooks.ziping.originalText);
+  assert.ok(report.ancientBooks.ziping.originalText.includes("建禄格"), "应准确命中子平真诠格局断语");
+
+  console.log(" 《滴天髓》清浊体用:", report.ancientBooks.diTianSui.book, "【" + report.ancientBooks.diTianSui.section + "】");
+  console.log(" 《滴天髓》原文:", report.ancientBooks.diTianSui.originalText);
+  assert.ok(report.ancientBooks.diTianSui.originalText.includes("一清到底有精神"), "应准确命中滴天髓体用清浊名句");
+
+  console.log(" 四柱十二长生状态:", chart.changsheng.year.stage, chart.changsheng.month.stage, chart.changsheng.day.stage, chart.changsheng.hour.stage);
+  assert.strictEqual(chart.changsheng.day.stage, "胎", "戊土见子水应为胎位");
+  console.log(" 宗门经典群（子平真诠/滴天髓/三命通会/穷通宝鉴）与十二长生：全部测试通过！");
 
   console.log("\n=== 4. 测试周易六爻金钱卦拟真演化 ===");
   const fs = require("fs");

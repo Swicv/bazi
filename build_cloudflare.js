@@ -35,11 +35,6 @@ const analyzerCode = fs.readFileSync(path.join(__dirname, "lib/analyzer.js"), "u
   .replace(/const sanMingData = [\s\S]*?;/, "")
   .replace(/module\.exports\s*=\s*\{[\s\S]*?\};/, "");
 
-const aiAdvisorCode = fs.readFileSync(path.join(__dirname, "lib/ai_advisor.js"), "utf-8")
-  .replace(/const https = require\("https"\);/, "")
-  .replace(/const http = require\("http"\);/, "")
-  .replace(/async function streamAdvice[\s\S]*?module\.exports\s*=\s*\{[\s\S]*?\};/, "");
-
 const workerTemplate = `/**
  * Cloudflare Pages Functions / Worker 主入口 (_worker.js)
  * 纯 Serverless 边缘执行，零冷启动，自动支持全球 CDN 与 KV 存储
@@ -55,7 +50,6 @@ let localLicenseKeys = ${JSON.stringify(licenseKeys)};
 ${calendarCode}
 ${baziCode}
 ${analyzerCode}
-${aiAdvisorCode}
 
 // 易经摇卦算法
 function generateIChingShake() {
@@ -174,42 +168,7 @@ export default {
       }
     }
 
-    // 3. AI 顾问流式咨询
-    if (pathname === "/api/ai/ask" && method === "POST") {
-      try {
-        const body = await request.json();
-        const { question, chart, report } = body;
-        const answer = generateHeuristicResponse(question, chart, report);
-        
-        // 构造流式 SSE 响应
-        const encoder = new TextEncoder();
-        const stream = new ReadableStream({
-          async start(controller) {
-            const chunks = answer.split("\\n");
-            for (let i = 0; i < chunks.length; i++) {
-              const line = chunks[i];
-              controller.enqueue(encoder.encode(\`data: \${JSON.stringify({ text: line + (i < chunks.length - 1 ? "\\n" : "") })}\\n\\n\`));
-              await new Promise(r => setTimeout(r, 40));
-            }
-            controller.enqueue(encoder.encode("data: [DONE]\\n\\n"));
-            controller.close();
-          }
-        });
-
-        return new Response(stream, {
-          headers: {
-            "Content-Type": "text/event-stream; charset=utf-8",
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
-            "Access-Control-Allow-Origin": "*"
-          }
-        });
-      } catch (err) {
-        return jsonResponse({ error: "AI 顾问响应异常" }, 500);
-      }
-    }
-
-    // 4. 周易六爻起卦
+    // 3. 周易六爻起卦
     if (pathname === "/api/iching/shake" && method === "GET") {
       return jsonResponse({ success: true, ...generateIChingShake() });
     }

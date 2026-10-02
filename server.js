@@ -11,7 +11,6 @@ const url = require("url");
 const { CITY_LONGITUDES } = require("./lib/calendar");
 const { fullBaZiChart } = require("./lib/bazi");
 const { generateComprehensiveReport } = require("./lib/analyzer");
-const { streamAdvice } = require("./lib/ai_advisor");
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, "public");
@@ -198,16 +197,7 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  // 3. API: AI 顾问流式咨询
-  if (pathname === "/api/ai/ask" && method === "POST") {
-    try {
-      const body = await parseJsonBody(req);
-      return streamAdvice(body, res);
-    } catch (err) {
-      console.error("AI Advisor error:", err);
-      return sendJson(res, 500, { error: "AI 顾问响应异常" });
-    }
-  }
+
 
   // 4. API: 周易六爻金钱卦
   if (pathname === "/api/iching/shake" && method === "GET") {
