@@ -697,8 +697,9 @@ select.form-control option {
 /* 移动端适配 */
 @media (max-width: 768px) {
   .header-nav {
+    position: relative !important; /* 移动端取消固定吸顶，彻底避免挡住下方折叠下拉与表单 */
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     padding: 12px;
   }
   .nav-tabs {
@@ -708,6 +709,14 @@ select.form-control option {
   .tab-btn {
     padding: 6px 12px;
     font-size: 12px;
+  }
+  .main-container {
+    margin: 12px auto;
+    padding: 0 12px 60px;
+  }
+  .glass-card {
+    padding: 16px;
+    border-radius: 14px;
   }
   .pillars-board {
     grid-template-columns: repeat(2, 1fr);

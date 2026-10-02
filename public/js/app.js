@@ -504,6 +504,9 @@ async function verifyLicenseKey() {
     }
   } catch (err) {
     alert("核销请求异常，请检查网络");
+  }
+}
+
 // 打印导出 PDF
 function exportReportPdf() {
   if (!state.isVip) {
